@@ -41,7 +41,7 @@
 --->
 <script>
     var baseLink;
-    if (path) {
+    if (typeof path !== "undefined") {
         baseLink = path;
     } else {
         baseLink = "https://api.github.com/repos/Its-Just-Nans/tests/contents/";
