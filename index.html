@@ -1,0 +1,136 @@
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name of file</th>
+            <th>Size</th>
+            <th>Type</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody id="dataTable"></tbody>
+</table>
+
+<style>
+    table {
+        border: 1px solid grey;
+        color: blue;
+        border-collapse: collapse;
+        width: 100%;
+        text-align: center;
+    }
+    thead {
+        font-weight: bold;
+        border-bottom: 1px solid grey;
+    }
+    td {
+        padding: 5px 10px;
+    }
+    tbody > tr:hover {
+        color: black;
+    }
+    tr {
+        border: 1px solid grey;
+    }
+    tbody > tr {
+        cursor: pointer;
+    }
+</style>
+<!-- for local test
+<script src="//its-just-nans.github.io/cdn/useful.js"></script>
+--->
+<script>
+    var baseLink;
+    if (!path) {
+        baseLink = path;
+    } else {
+        baseLink = "https://api.github.com/repos/Its-Just-Nans/tests/contents/";
+    }
+    generateTable(baseLink);
+
+    function createTD(inner) {
+        let element = document.createElement("td");
+        element.innerHTML = inner;
+        return element;
+    }
+
+    function generateTable(url) {
+        let dataTable = document.getElementById("dataTable");
+        dataTable.innerHTML = "";
+        if (url != baseLink) {
+            let firstLine = document.createElement("tr");
+            let columns = [];
+            columns.push(createTD(".."));
+            columns.push(createTD(""));
+            columns.push(createTD(""));
+            columns.push(createTD(""));
+            columns.push(createTD(""));
+            for (let oneColum of columns) {
+                firstLine.appendChild(oneColum);
+            }
+            firstLine.onclick = function () {
+                debugger;
+                let backLink = url.split("/");
+                if (backLink[backLink.length - 1] == "") {
+                    backLink.pop();
+                    backLink.pop();
+                } else {
+                    backLink.pop();
+                }
+                backLink = backLink.join("/") + "/";
+                generateTable(backLink);
+            };
+            dataTable.appendChild(firstLine);
+        }
+        makeRequest("GET", url)
+            .then(function (response) {
+                let fileInDir = JSON.parse(response);
+                let dataTable = document.getElementById("dataTable");
+                for (let oneFile of fileInDir) {
+                    let line = document.createElement("tr");
+                    let columns = [];
+                    let oneColum;
+                    //add ico
+                    oneColum = document.createElement("td");
+                    if (oneFile["type"] == "file") {
+                        oneColum.innerHTML =
+                            '<svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M3.75 1.5a.25.25 0 00-.25.25v11.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V6H9.75A1.75 1.75 0 018 4.25V1.5H3.75zm5.75.56v2.19c0 .138.112.25.25.25h2.19L9.5 2.06zM2 1.75C2 .784 2.784 0 3.75 0h5.086c.464 0 .909.184 1.237.513l3.414 3.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0112.25 15h-8.5A1.75 1.75 0 012 13.25V1.75z"></path></svg>';
+                    } else {
+                        oneColum.innerHTML =
+                            '<svg aria-label="Directory" class="octicon octicon-file-directory text-color-icon-directory" height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>';
+                    }
+                    columns.push(oneColum);
+                    //add name
+                    columns.push(createTD(oneFile["name"]));
+                    //add size
+                    columns.push(createTD(oneFile["size"] + " bytes"));
+                    //add type
+                    columns.push(createTD(oneFile["type"]));
+                    //add link
+                    columns.push(createTD(oneFile["path"]));
+                    for (let oneColum of columns) {
+                        oneColum.onclick = function () {
+                            let element = this.parentNode;
+                            if (element.children[3].innerHTML == "file") {
+                                let linkToFile;
+                                if (window.location.origin === "https://its-just-nans.github.io") {
+                                    linkToFile = window.location.origin + "/rt/";
+                                } else {
+                                    linkToFile = window.location.origin;
+                                }
+                                window.open(linkToFile + "/" + element.children[4].innerHTML);
+                            } else {
+                                generateTable(baseLink + oneFile["path"]);
+                            }
+                        };
+                        line.appendChild(oneColum);
+                    }
+                    dataTable.appendChild(line);
+                }
+            })
+            .catch(function (error) {
+                smollPopUp({ title: "Error API", content: "Error with  github API, see console for more informations" }, "ko");
+                console.log(error);
+            });
+    }
+</script>
