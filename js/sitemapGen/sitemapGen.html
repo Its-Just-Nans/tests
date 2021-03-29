@@ -1,0 +1,57 @@
+<script src="https://its-just-nans.github.io/cdn/useful.js"></script>
+<div id="hidden" style="display: none">
+    <nav>
+        <h1 id="titleNav">Navigation</h1>
+        <ul class="nav-list"></ul>
+        <ul class="nav-list"></ul>
+    </nav>
+</div>
+<a id="final"></a>
+<script>
+    const urlBase = "https://its-just-nans.github.io/";
+
+    var sitemap;
+    var allLinks = [];
+
+    function addLink(link) {
+        allLinks.push("<url>");
+        allLinks.push(`<loc>${link}</loc>`);
+        allLinks.push("</url>");
+    }
+
+    var links = document.getElementsByClassName("nav-list");
+
+    addLink(`${urlBase}rt/`);
+    for (let oneLink of links[0].children) {
+        if (oneLink.localName != "hr") {
+            addLink(`${urlBase}rt/${oneLink.children[0].hash}`);
+        }
+    }
+    addLink(`${urlBase}golb/`);
+    for (let oneLink of links[1].children) {
+        if (oneLink.localName != "hr") {
+            addLink(`${urlBase}golb/${oneLink.children[0].hash}`);
+        }
+    }
+    let final = document.getElementById("final");
+    var blob = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    for (let one of allLinks) {
+        blob += one + "\n";
+    }
+    blob += "</urlset>";
+    console.log(allLinks);
+
+    function download(filename, text) {
+        var element = document.createElement("a");
+        element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
+        element.setAttribute("download", filename);
+
+        element.style.display = "none";
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    download("sitemap.xml", blob);
+</script>
