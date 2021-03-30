@@ -1,10 +1,9 @@
 import re
 import urllib.request
 import sys
-# url = input('Veuillez saisir le lien que vous voulez\n')
+baseUrl = input('Write  the URL \n')
 
-baseUrl = "https://its-just-nans.github.io/golb/"
-baseUrl = "https://www.envibus.fr/"
+# baseUrl = "https://its-just-nans.github.io/"
 
 
 domainName = baseUrl.split("/")
