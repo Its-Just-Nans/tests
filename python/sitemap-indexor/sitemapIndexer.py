@@ -25,8 +25,8 @@ globalVar["verbose"] = True if '--verbose' in sys.argv else False
 globalVar["quiet"] = True if '--quiet' in sys.argv else False
 globalVar["sitemap"] = True if '--sitemap' in sys.argv else False
 globalVar["rmError"] = True if '--rmError' in sys.argv else False
-globalVar["css"] = False if '--nocss' in sys.argv else True
-globalVar["json"] = False if '--nocss' in sys.argv else True
+globalVar["css"] = False if '--css' in sys.argv else True
+globalVar["json"] = False if '--json' in sys.argv else True
 
 
 def disp(text, end):
