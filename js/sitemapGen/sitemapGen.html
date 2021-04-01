@@ -1,45 +1,33 @@
-<script src="https://its-just-nans.github.io/cdn/useful.js"></script>
-<div id="hidden" style="display: none">
-    <nav>
-        <h1 id="titleNav">Navigation</h1>
-        <ul class="nav-list"></ul>
-        <ul class="nav-list"></ul>
-    </nav>
-</div>
-<a id="final"></a>
+<pre id="final"></pre>
 <script>
-    const urlBase = "https://its-just-nans.github.io/";
+    const URL_TO_EXPLORE = "https://its-just-nans.github.io";
+    fetch(URL_TO_EXPLORE).then(function (response) {
+        response.text().then(function (cleanText) {
+            const regex = /href="[^"]*"/gs;
+            let result = cleanText.match(regex);
+            let res = [];
+            for (let oneLink of result) {
+                res.push(oneLink.substring(6, oneLink.length - 1));
+            }
+            genSiteMap(res);
+        });
+    });
 
-    var sitemap;
-    var allLinks = [];
-
-    function addLink(link) {
-        allLinks.push("<url>");
-        allLinks.push(`<loc>${link}</loc>`);
-        allLinks.push("</url>");
-    }
-
-    var links = document.getElementsByClassName("nav-list");
-
-    addLink(`${urlBase}rt/`);
-    for (let oneLink of links[0].children) {
-        if (oneLink.localName != "hr") {
-            addLink(`${urlBase}rt/${oneLink.children[0].hash}`);
-        }
-    }
-    addLink(`${urlBase}golb/`);
-    for (let oneLink of links[1].children) {
-        if (oneLink.localName != "hr") {
-            addLink(`${urlBase}golb/${oneLink.children[0].hash}`);
-        }
-    }
+    //async
     let final = document.getElementById("final");
-    var blob = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-    for (let one of allLinks) {
-        blob += one + "\n";
+
+    function genSiteMap(result) {
+        var blob = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+        for (let oneLink of result) {
+            blob += `<url>\n`;
+            blob += `<loc>${oneLink}</loc>\n`;
+            blob += `</url>\n`;
+        }
+        blob += "</urlset>";
+        //console.log(allLinks);
+        download("sitemap.xml", blob);
+        final.innerHTML = blob;
     }
-    blob += "</urlset>";
-    console.log(allLinks);
 
     function download(filename, text) {
         var element = document.createElement("a");
@@ -53,5 +41,4 @@
 
         document.body.removeChild(element);
     }
-    download("sitemap.xml", blob);
 </script>
