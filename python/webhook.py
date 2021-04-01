@@ -12,19 +12,19 @@ url = "https://discord.com/api/webhooks/"
 isFile = False
 
 if isFile:
-    #if you want to send a file here
+    # if you want to send a file here
     # when sending a file, you can't send "embeds" part
     payload = {
         "username": "Bot",
         "content": "content here"
     }
-    files = {filename: open(filename,'rb')}
+    files = {filename: open(filename, 'rb')}
     r = requests.post(url, files=files, data=payload)
-else :
+else:
     payload = {
-    "username": "Bot",
-    "content": "content here",
-    'embeds': [
+        "username": "Bot",
+        "content": "content here",
+        'embeds': [
             {
                 'title': 'Title',
                 'description': 'Description',
