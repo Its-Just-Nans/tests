@@ -19,7 +19,6 @@ ext = []
 mail = []
 globalVar = {}
 countLink = 0
-dispWebContent = False
 
 globalVar["verbose"] = True if '--verbose' in sys.argv else False
 globalVar["quiet"] = True if '--quiet' in sys.argv else False
@@ -27,6 +26,7 @@ globalVar["sitemap"] = True if '--sitemap' in sys.argv else False
 globalVar["rmError"] = True if '--rmError' in sys.argv else False
 globalVar["css"] = False if '--css' in sys.argv else True
 globalVar["json"] = False if '--json' in sys.argv else True
+globalVar["html"] = True if '--html' in sys.argv else False
 
 
 def disp(text, end):
@@ -53,7 +53,7 @@ def explorer(url):
         disp(exception.__class__.__qualname__, "\n")
         return False
     webContent = response.read().decode('utf-8').strip()
-    if dispWebContent:
+    if globalVar["html"]:
         disp(webContent, "\n")
     variable = re.findall('href="[^"]*"', webContent)
 
