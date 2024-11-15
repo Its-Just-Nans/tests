@@ -1,4 +1,7 @@
-cd test
+#!/bin/bash
+
+cd test || exit
+
 list=$(ls -1 test*.c)
 for x in $list; do
     file=${x%.*}
